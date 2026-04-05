@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bapuji Tate — Software Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ============================================
+           VARIABLES & RESET
+           ============================================ */
+        :root {
+            --siemens-teal: #009999;
+            --siemens-dark-teal: #00646E;
+            --siemens-petrol: #005159;
+            --siemens-light-teal: #00CCCC;
+            --siemens-accent: #00FFD1;
+            --siemens-bg-dark: #0A1628;
+            --siemens-bg-medium: #0F1F3A;
+            --siemens-bg-light: #142847;
+            --siemens-text: #E8F4F8;
+            --siemens-text-dim: #8BA4B8;
+            --siemens-glow: rgba(0, 153, 153, 0.4);
+            --siemens-glow-strong: rgba(0, 153, 153, 0.7);
+            --bus-gold: #FFD700;
+            --bus-orange: #FF8C00;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--siemens-teal) var(--siemens-bg-dark);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--siemens-bg-dark);
+            color: var(--siemens-text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--siemens-bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--siemens-teal); border-radius: 3px; }
+
+        /* ============================================
+           ANIMATED BACKGROUND
+           ============================================ */
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0,153,153,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0,100,110,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0,81,89,0.08) 0%, transparent 70%);
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(0,153,153,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,153,153,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--siemens-teal);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-100px) scale(1); }
+        }
+
+        /* ============================================
+           GIT COMMIT GRAPH (LEFT SIDE)
+           ============================================ */
+        :root {
+            --git-main: #F78166;
+            --git-main-dim: rgba(247,129,102,0.35);
+            --git-main-glow: rgba(247,129,102,0.5);
+            --git-feat: #D2A8FF;
+            --git-feat-dim: rgba(210,168,255,0.30);
+            --git-fix: #7EE787;
+            --git-fix-dim: rgba(126,231,135,0.30);
+            --git-hotfix: #FF7EB6;
+            --git-hotfix-dim: rgba(255,126,182,0.30);
+            --git-bg: #0D1117;
+        }
+
+        .git-graph {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 260px;
+            z-index: 100;
+            pointer-events: none;
+            padding-left: 40px;
+        }
+
+        /* SVG for branch lines */
+        .git-graph-svg {
+            position: absolute;
+            top: 0;
+            left: 40px;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Main vertical branch line (background) */
+        .git-graph-line {
+            position: absolute;
+            left: 76px;
+            top: 0;
+            bottom: 0;
+            width: 2.5px;
+            background: rgba(247,129,102,0.12);
+        }
+
+        /* Progress fill line */
+        .git-graph-progress {
+            position: absolute;
+            left: 76px;
+            top: 0;
+            width: 2.5px;
+            height: 0%;
+            background: linear-gradient(180deg, var(--git-main), rgba(247,129,102,0.6));
+            filter: drop-shadow(0 0 6px var(--git-main-glow));
+            transition: height 0.05s linear;
+        }
+
+        /* Secondary branch lines (vertical) */
+        .git-branch-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            border-radius: 1px;
+        }
+
+        .git-branch-line.feat {
+            left: 106px;
+            background: rgba(210,168,255,0.08);
+        }
+
+        .git-branch-line.fix {
+            left: 126px;
+            background: rgba(126,231,135,0.06);
+        }
+
+        /* Commit nodes */
+        .git-commit {
+            position: absolute;
+            left: 77px;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .git-commit.on-feat {
+            left: 107px;
+        }
+
+        .git-commit.on-fix {
+            left: 127px;
+        }
+
+        .commit-node {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--git-bg);
+            border: 2.5px solid var(--git-main-dim);
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .commit-node::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: transparent;
+            transition: all 0.4s;
+        }
+
+        /* Branch-specific node colors */
+        .git-commit.on-feat .commit-node {
+            border-color: var(--git-feat-dim);
+        }
+
+        .git-commit.on-fix .commit-node {
+            border-color: var(--git-fix-dim);
+        }
+
+        /* Visited states per branch */
+        .git-commit.visited .commit-node {
+            background: var(--git-main);
+            border-color: var(--git-main);
+            box-shadow: 0 0 10px var(--git-main-glow), 0 0 20px rgba(247,129,102,0.2);
+            transform: scale(1.15);
+        }
+
+        .git-commit.on-feat.visited .commit-node {
+            background: var(--git-feat);
+            border-color: var(--git-feat);
+            box-shadow: 0 0 10px rgba(210,168,255,0.5), 0 0 20px rgba(210,168,255,0.2);
+        }
+
+        .git-commit.on-fix.visited .commit-node {
+            background: var(--git-fix);
+            border-color: var(--git-fix);
+            box-shadow: 0 0 10px rgba(126,231,135,0.5), 0 0 20px rgba(126,231,135,0.2);
+        }
+
+        .git-commit.visited .commit-node::before {
+            background: rgba(247,129,102,0.06);
+        }
+
+        .git-commit.on-feat.visited .commit-node::before {
+            background: rgba(210,168,255,0.06);
+        }
+
+        .git-commit.on-fix.visited .commit-node::before {
+            background: rgba(126,231,135,0.06);
+        }
+
+        /* Merge commit (diamond shape) */
+        .git-commit.merge .commit-node {
+            border-radius: 3px;
+            transform: rotate(45deg);
+            width: 12px;
+            height: 12px;
+        }
+
+        .git-commit.merge.visited .commit-node {
+            transform: rotate(45deg) scale(1.15);
+        }
+
+        /* Commit label (section name) */
+        .commit-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: rgba(139,164,184,0.4);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            transition: all 0.4s;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: transparent;
+        }
+
+        .git-commit.visited .commit-label {
+            color: var(--git-main);
+            background: rgba(247,129,102,0.06);
+        }
+
+        .git-commit.on-feat.visited .commit-label {
+            color: var(--git-feat);
+            background: rgba(210,168,255,0.06);
+        }
+
+        .git-commit.on-fix.visited .commit-label {
+            color: var(--git-fix);
+            background: rgba(126,231,135,0.06);
+        }
+
+        /* Commit hash */
+        .commit-hash {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: rgba(139,164,184,0.2);
+            letter-spacing: 0.5px;
+            transition: all 0.4s;
+            display: block;
+            margin-top: 1px;
+        }
+
+        .git-commit.visited .commit-hash {
+            color: rgba(247,129,102,0.35);
+        }
+
+        .git-commit.on-feat.visited .commit-hash {
+            color: rgba(210,168,255,0.35);
+        }
+
+        .git-commit.on-fix.visited .commit-hash {
+            color: rgba(126,231,135,0.35);
+        }
+
+        /* Branch tag badges */
+        .branch-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 3px;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .branch-tag.main {
+            color: var(--git-main);
+            border: 1px solid rgba(247,129,102,0.3);
+            background: rgba(247,129,102,0.08);
+        }
+
+        .branch-tag.feat {
+            color: var(--git-feat);
+            border: 1px solid rgba(210,168,255,0.3);
+            background: rgba(210,168,255,0.08);
+        }
+
+        .branch-tag.fix {
+            color: var(--git-fix);
+            border: 1px solid rgba(126,231,135,0.3);
+            background: rgba(126,231,135,0.08);
+        }
+
+        .branch-tag.hotfix {
+            color: var(--git-hotfix);
+            border: 1px solid rgba(255,126,182,0.3);
+            background: rgba(255,126,182,0.08);
+        }
+
+        /* HEAD indicator */
+        .git-head {
+            position: fixed;
+            left: 116px;
+            z-index: 102;
+            pointer-events: none;
+            transition: top 0.1s linear;
+            display: flex;
+            align-items: center;
+        }
+
+        .head-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: #0D1117;
+            background: var(--git-main);
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 12px var(--git-main-glow);
+            position: relative;
+        }
+
+        .head-tag::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 5px solid var(--git-main);
+        }
+
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            margin-left: 270px;
+            max-width: 1100px;
+            padding: 0 2rem;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 0;
+        }
+
+        .section-inner {
+            width: 100%;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .section-inner.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        #hero {
+            min-height: 100vh;
+            padding-top: 40px;
+        }
+
+        #hero .section-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 3rem;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex-shrink: 0;
+            position: relative;
+            margin-top: 60px;
+        }
+
+        .hero-image img {
+            width: 280px;
+            height: 280px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 3px solid rgba(0,153,153,0.3);
+            box-shadow: 0 20px 60px rgba(0,153,153,0.2);
+            transition: all 0.4s ease;
+        }
+
+        .hero-image img:hover {
+            border-color: var(--siemens-accent);
+            box-shadow: 0 24px 70px rgba(0,153,153,0.35);
+            transform: translateY(-4px);
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: -8px; left: -8px;
+            right: -8px; bottom: -8px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, var(--siemens-teal), transparent, var(--siemens-accent));
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(0,153,153,0.1);
+            border: 1px solid rgba(0,153,153,0.25);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--siemens-accent);
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--siemens-accent);
+            border-radius: 50%;
+            animation: dotPulse 2s infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title .first-name {
+            display: block;
+            background: linear-gradient(135deg, #fff, var(--siemens-text));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title .last-name {
+            display: block;
+            background: linear-gradient(135deg, var(--siemens-teal), var(--siemens-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-role {
+            font-size: 1.3rem;
+            color: var(--siemens-text-dim);
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .hero-role .typing-text {
+            border-right: 2px solid var(--siemens-accent);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { border-color: var(--siemens-accent); }
+            50% { border-color: transparent; }
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: var(--siemens-text-dim);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--siemens-teal), var(--siemens-dark-teal));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,153,153,0.4);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--siemens-accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border: 2px solid rgba(0,153,153,0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--siemens-accent);
+            background: rgba(0,153,153,0.1);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0,153,153,0.15);
+        }
+
+        .stat { text-align: left; }
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--siemens-light-teal), var(--siemens-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--siemens-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           SECTION HEADERS
+           ============================================ */
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--siemens-accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .section-tag::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 28px;
+            height: 2px;
+            background: var(--siemens-accent);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+
+        .section-title .highlight {
+            background: linear-gradient(135deg, var(--siemens-teal), var(--siemens-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ============================================
+           ABOUT SECTION
+           ============================================ */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .about-text p {
+            color: var(--siemens-text-dim);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-card {
+            padding: 1.2rem;
+            background: rgba(0,153,153,0.05);
+            border: 1px solid rgba(0,153,153,0.12);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .info-card:hover {
+            border-color: rgba(0,153,153,0.3);
+            background: rgba(0,153,153,0.08);
+            transform: translateY(-2px);
+        }
+
+        .info-card-icon {
+            font-size: 1.3rem;
+            color: var(--siemens-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card-label {
+            font-size: 0.7rem;
+            color: var(--siemens-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-card-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--siemens-text);
+        }
+
+        /* ============================================
+           SKILLS SECTION
+           ============================================ */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .skill-category {
+            padding: 2rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--siemens-teal), var(--siemens-accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .skill-category:hover::before { opacity: 1; }
+
+        .skill-category:hover {
+            border-color: rgba(0,153,153,0.3);
+            background: rgba(0,153,153,0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,153,153,0.1);
+        }
+
+        .skill-cat-icon {
+            width: 48px; height: 48px;
+            background: rgba(0,153,153,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--siemens-accent);
+            margin-bottom: 1rem;
+        }
+
+        .skill-cat-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--siemens-text);
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            padding: 5px 12px;
+            background: rgba(0,153,153,0.08);
+            border: 1px solid rgba(0,153,153,0.15);
+            border-radius: 6px;
+            font-size: 0.78rem;
+            color: var(--siemens-text-dim);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0,153,153,0.15);
+            color: var(--siemens-accent);
+            border-color: rgba(0,153,153,0.4);
+        }
+
+        /* ============================================
+           EXPERIENCE SECTION
+           ============================================ */
+        .experience-card {
+            padding: 2.5rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: linear-gradient(180deg, var(--siemens-accent), var(--siemens-teal));
+        }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .exp-company-logo {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, var(--siemens-teal), var(--siemens-dark-teal));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .exp-role {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .exp-company {
+            font-size: 1.1rem;
+            color: var(--siemens-accent);
+            font-weight: 500;
+        }
+
+        .exp-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--siemens-text-dim);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .exp-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .exp-achievements {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .achievement {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 1rem;
+            background: rgba(0,153,153,0.04);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .achievement:hover {
+            background: rgba(0,153,153,0.08);
+        }
+
+        .achievement-icon {
+            width: 28px; height: 28px;
+            background: rgba(0,153,153,0.12);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--siemens-accent);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .achievement p {
+            color: var(--siemens-text-dim);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .achievement strong {
+            color: var(--siemens-text);
+        }
+
+        /* ============================================
+           EDUCATION SECTION
+           ============================================ */
+        .education-card {
+            padding: 2.5rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 20px;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .edu-icon-wrap {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, rgba(0,153,153,0.15), rgba(0,153,153,0.05));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--siemens-accent);
+            flex-shrink: 0;
+        }
+
+        .edu-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .edu-content .edu-school {
+            color: var(--siemens-accent);
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .edu-content .edu-details {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--siemens-text-dim);
+            font-size: 0.85rem;
+        }
+
+        .edu-details span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cgpa-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(0,255,209,0.1);
+            border: 1px solid rgba(0,255,209,0.25);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--siemens-accent);
+            margin-top: 0.75rem;
+        }
+
+        /* ============================================
+           ACHIEVEMENTS SECTION
+           ============================================ */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .award-card {
+            padding: 2rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .award-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(0,255,209,0.06), transparent 70%);
+            transition: all 0.4s;
+        }
+
+        .award-card:hover {
+            border-color: rgba(0,153,153,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,153,153,0.1);
+        }
+
+        .award-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,140,0,0.1));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .award-year {
+            font-size: 0.75rem;
+            color: var(--siemens-accent);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .award-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .award-desc {
+            font-size: 0.85rem;
+            color: var(--siemens-text-dim);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           CONTACT SECTION
+           ============================================ */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .contact-info-card {
+            padding: 2.5rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 20px;
+        }
+
+        .contact-info-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info-card p {
+            color: var(--siemens-text-dim);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0,153,153,0.08);
+            text-decoration: none;
+            color: var(--siemens-text);
+            transition: all 0.3s;
+        }
+
+        .contact-item:last-child { border-bottom: none; }
+
+        .contact-item:hover {
+            color: var(--siemens-accent);
+            padding-left: 8px;
+        }
+
+        .contact-item-icon {
+            width: 44px; height: 44px;
+            background: rgba(0,153,153,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--siemens-accent);
+            flex-shrink: 0;
+        }
+
+        .contact-item-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .contact-form-card {
+            padding: 2.5rem;
+            background: rgba(0,153,153,0.04);
+            border: 1px solid rgba(0,153,153,0.1);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .contact-cta-icon {
+            font-size: 3rem;
+            color: var(--siemens-accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-form-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-form-card p {
+            color: var(--siemens-text-dim);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 50px; height: 50px;
+            background: rgba(0,153,153,0.08);
+            border: 1px solid rgba(0,153,153,0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--siemens-text-dim);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--siemens-teal);
+            color: white;
+            border-color: var(--siemens-teal);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,153,153,0.3);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            position: relative;
+            z-index: 1;
+            margin-left: 270px;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(0,153,153,0.1);
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--siemens-text-dim);
+            font-size: 0.85rem;
+        }
+
+        .footer .heart {
+            color: var(--siemens-accent);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 200px;
+                padding: 0 1.5rem;
+            }
+            .footer { margin-left: 200px; }
+            .git-graph { width: 190px; padding-left: 28px; }
+            .commit-label { font-size: 0.6rem; }
+            .git-head { left: 100px; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 0 1.5rem;
+            }
+            .footer { margin-left: 0; }
+            .git-graph { display: none; }
+            .git-head { display: none; }
+
+            .hero-stats { gap: 1.5rem; }
+            .about-grid { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .exp-achievements { grid-template-columns: 1fr; }
+            .achievements-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+
+            .education-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            #hero .section-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-image img {
+                width: 200px;
+                height: 200px;
+            }
+
+            section { min-height: auto; padding: 4rem 0; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { letter-spacing: -1.5px; }
+            .hero-stats { flex-direction: column; gap: 1rem; }
+            .info-cards { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================
+           DOWNLOAD RESUME FLOATING BTN
+           ============================================ */
+        .download-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--siemens-teal), var(--siemens-dark-teal));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            text-decoration: none;
+            box-shadow: 0 8px 30px rgba(0,153,153,0.4);
+            transition: all 0.3s;
+        }
+
+        .download-fab:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0,153,153,0.5);
+        }
+
+        /* ============================================
+           ROAD MARKS (decorative dashes on route line)
+           ============================================ */
+    </style>
+</head>
+<body>
+
+    <!-- Background Effects -->
+    <div class="bg-pattern"></div>
+    <div class="grid-overlay"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Git Commit Graph (Multi-branch) -->
+    <div class="git-graph" id="gitGraph">
+        <div class="git-graph-line"></div>
+        <div class="git-branch-line feat"></div>
+        <div class="git-branch-line fix"></div>
+        <div class="git-graph-progress" id="gitProgress"></div>
+
+        <!-- SVG for branch curves -->
+        <svg class="git-graph-svg" preserveAspectRatio="none" viewBox="0 0 240 1000">
+            <defs>
+                <linearGradient id="gradFeat" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#D2A8FF" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#D2A8FF" stop-opacity="0.1"/>
+                </linearGradient>
+                <linearGradient id="gradFix" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#7EE787" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#7EE787" stop-opacity="0.1"/>
+                </linearGradient>
+            </defs>
+            <!-- feat branch fork from main at ~15% and merge back at ~40% -->
+            <path d="M52,150 C52,165 82,175 82,190" fill="none" stroke="rgba(210,168,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M82,370 C82,385 52,395 52,410" fill="none" stroke="rgba(210,168,255,0.2)" stroke-width="2" stroke-linecap="round"/>
+            <!-- fix branch fork from main at ~55% and merge back at ~75% -->
+            <path d="M52,550 C52,565 102,580 102,595" fill="none" stroke="rgba(126,231,135,0.15)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M102,740 C102,755 52,765 52,778" fill="none" stroke="rgba(126,231,135,0.15)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+
+        <!-- main branch commits -->
+        <div class="git-commit" data-stop="0.06" data-section="hero">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">init <span class="branch-tag main">main</span></span>
+                <span class="commit-hash">a1b2c3d</span>
+            </div>
+        </div>
+
+        <div class="git-commit" data-stop="0.15" data-section="about">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">feat: about</span>
+                <span class="commit-hash">e4f5a6b</span>
+            </div>
+        </div>
+
+        <!-- feat branch commits (skills section) -->
+        <div class="git-commit on-feat" data-stop="0.24" data-section="skills">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">skills <span class="branch-tag feat">feat/ui</span></span>
+                <span class="commit-hash">c7d8e9f</span>
+            </div>
+        </div>
+
+        <div class="git-commit on-feat" data-stop="0.32" data-section="skills">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">add tech stack</span>
+                <span class="commit-hash">f0a1b2c</span>
+            </div>
+        </div>
+
+        <!-- merge feat back to main -->
+        <div class="git-commit merge" data-stop="0.40" data-section="experience">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">merge: feat/ui <span class="branch-tag hotfix">merge</span></span>
+                <span class="commit-hash">d3e4f5a</span>
+            </div>
+        </div>
+
+        <div class="git-commit" data-stop="0.49" data-section="experience">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">feat: experience</span>
+                <span class="commit-hash">b6c7d8e</span>
+            </div>
+        </div>
+
+        <!-- fix branch commits (education) -->
+        <div class="git-commit on-fix" data-stop="0.58" data-section="education">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">education <span class="branch-tag fix">fix/data</span></span>
+                <span class="commit-hash">f9a0b1c</span>
+            </div>
+        </div>
+
+        <div class="git-commit on-fix" data-stop="0.66" data-section="education">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">update cgpa</span>
+                <span class="commit-hash">d2e3f4a</span>
+            </div>
+        </div>
+
+        <!-- merge fix back to main -->
+        <div class="git-commit merge" data-stop="0.75" data-section="achievements">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">merge: fix/data <span class="branch-tag hotfix">merge</span></span>
+                <span class="commit-hash">b5c6d7e</span>
+            </div>
+        </div>
+
+        <div class="git-commit" data-stop="0.84" data-section="achievements">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">feat: awards</span>
+                <span class="commit-hash">f8a9b0c</span>
+            </div>
+        </div>
+
+        <div class="git-commit" data-stop="0.93" data-section="contact">
+            <div class="commit-node"></div>
+            <div>
+                <span class="commit-label">contact <span class="branch-tag main">HEAD</span></span>
+                <span class="commit-hash">d1e2f3a</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Git HEAD indicator -->
+    <div class="git-head" id="gitHead">
+        <span class="head-tag">HEAD</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- ==================== HERO ==================== -->
+        <section id="hero">
+            <div class="section-inner">
+                <div class="hero-text">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    Available for opportunities
+                </div>
+                <h1 class="hero-title">
+                    <span class="first-name">Bapuji</span>
+                    <span class="last-name">Tate</span>
+                </h1>
+                <p class="hero-role">
+                    <span class="typing-text" id="typingText"></span>
+                </p>
+                <p class="hero-desc">
+                    Full Stack Developer with 4+ years of experience building scalable applications 
+                    using Angular and .NET. Skilled in designing REST APIs, microservices architecture, 
+                    and delivering reliable, high-performance applications.
+                </p>
+                <div class="hero-actions">
+                    <a href="#contact" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Get in Touch
+                    </a>
+                    <a href="BapujiTate-Resume.pdf" download class="btn-outline">
+                        <i class="fas fa-download"></i> Download Resume
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value" data-count="4">0</div>
+                        <div class="stat-label">Years Experience</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" data-count="2">0</div>
+                        <div class="stat-label">Companies</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" data-count="6">0</div>
+                        <div class="stat-label">Core Technologies</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" data-count="8">0</div>
+                        <div class="stat-label">CGPA Score</div>
+                    </div>
+                </div>
+                </div>
+                <div class="hero-image">
+                    <img src="profile.png" alt="Bapuji Tate">
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ABOUT ==================== -->
+        <section id="about">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">About Me</span>
+                    <h2 class="section-title">Crafting <span class="highlight">Scalable</span><br>Full Stack Applications</h2>
+                </div>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <p>
+                            I'm a Software Engineer at <strong>Siemens</strong>, based in Pune, India. 
+                            I specialize in building scalable applications using <strong>Angular</strong> and 
+                            <strong>.NET</strong>, designing REST APIs, and developing microservices architecture.
+                        </p>
+                        <p>
+                            My work involves developing interactive frontend applications, building robust backend 
+                            systems, and implementing real-time communication using WebSockets. I have hands-on 
+                            experience with data pipelines, Snowflake integration, and client-side storage optimization.
+                        </p>
+                        <p>
+                            I'm passionate about modernizing legacy systems, improving efficiency through automation, 
+                            and staying updated with the latest in full stack development and cloud-native technologies.
+                        </p>
+                    </div>
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="info-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="info-card-label">Location</div>
+                            <div class="info-card-value">Pune, India</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-card-icon"><i class="fas fa-building"></i></div>
+                            <div class="info-card-label">Company</div>
+                            <div class="info-card-value">Siemens</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-card-icon"><i class="fas fa-code"></i></div>
+                            <div class="info-card-label">Primary Stack</div>
+                            <div class="info-card-value">Angular / .NET</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-card-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="info-card-label">Education</div>
+                            <div class="info-card-value">B.Tech CS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SKILLS ==================== -->
+        <section id="skills">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">Skills &amp; Expertise</span>
+                    <h2 class="section-title">My <span class="highlight">Technical</span> Arsenal</h2>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-category stagger-1">
+                        <div class="skill-cat-icon"><i class="fas fa-code"></i></div>
+                        <h3 class="skill-cat-title">Programming</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">Angular</span>
+                            <span class="skill-tag">C#</span>
+                            <span class="skill-tag">.NET</span>
+                        </div>
+                    </div>
+                    <div class="skill-category stagger-2">
+                        <div class="skill-cat-icon"><i class="fas fa-server"></i></div>
+                        <h3 class="skill-cat-title">Technologies</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">REST APIs</span>
+                            <span class="skill-tag">Microservices</span>
+                            <span class="skill-tag">WebSockets</span>
+                        </div>
+                    </div>
+                    <div class="skill-category stagger-3">
+                        <div class="skill-cat-icon"><i class="fas fa-database"></i></div>
+                        <h3 class="skill-cat-title">Database &amp; Storage</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">SQL</span>
+                            <span class="skill-tag">Snowflake</span>
+                            <span class="skill-tag">IndexedDB</span>
+                            <span class="skill-tag">Data Pipelines</span>
+                        </div>
+                    </div>
+                    <div class="skill-category stagger-4">
+                        <div class="skill-cat-icon"><i class="fab fa-docker"></i></div>
+                        <h3 class="skill-cat-title">DevOps</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Docker</span>
+                            <span class="skill-tag">CI/CD</span>
+                        </div>
+                    </div>
+                    <div class="skill-category stagger-5">
+                        <div class="skill-cat-icon"><i class="fas fa-vial"></i></div>
+                        <h3 class="skill-cat-title">Testing</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Unit Testing</span>
+                            <span class="skill-tag">Integration Testing</span>
+                            <span class="skill-tag">E2E Testing</span>
+                        </div>
+                    </div>
+                    <div class="skill-category stagger-6">
+                        <div class="skill-cat-icon"><i class="fas fa-brain"></i></div>
+                        <h3 class="skill-cat-title">Concepts</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">SOLID Principles</span>
+                            <span class="skill-tag">System Design</span>
+                            <span class="skill-tag">Data Structures</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== EXPERIENCE ==================== -->
+        <section id="experience">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">Experience</span>
+                    <h2 class="section-title">Where I've <span class="highlight">Made Impact</span></h2>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-company-logo">S</div>
+                            <h3 class="exp-role">Software Engineer</h3>
+                            <p class="exp-company">Siemens</p>
+                        </div>
+                    </div>
+                    <div class="exp-meta">
+                        <span><i class="fas fa-calendar-alt"></i> Feb 2025 – Present</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Pune, India</span>
+                    </div>
+                    <div class="exp-achievements">
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-database"></i></div>
+                            <p>Implemented a <strong>data synchronization pipeline</strong> to extract data from Snowflake into a local database, enabling in-app modifications and seamless data flow.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-drafting-compass"></i></div>
+                            <p>Developed an interactive <strong>canvas-based design tool</strong> in Angular, allowing users to drag and drop SVG elements to visually construct system workflows.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-bolt"></i></div>
+                            <p>Optimized application performance using <strong>IndexedDB</strong> for client-side storage, enabling efficient handling of large datasets and preventing memory leaks.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-sync-alt"></i></div>
+                            <p>Performed end-to-end <strong>migration of legacy Angular</strong> applications to the latest versions, including refactoring modules and resolving compatibility issues.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-broadcast-tower"></i></div>
+                            <p>Implemented <strong>real-time communication</strong> using WebSockets, improving application responsiveness.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-database"></i></div>
+                            <p>Optimized database interactions by writing efficient <strong>SQL queries and scripts</strong>, improving performance.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-vial"></i></div>
+                            <p>Wrote <strong>unit and integration tests</strong> for both frontend and backend, improving code quality and reliability.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience-card" style="margin-top: 2rem;">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-company-logo">E</div>
+                            <h3 class="exp-role">Software Engineer</h3>
+                            <p class="exp-company">Emerson</p>
+                        </div>
+                    </div>
+                    <div class="exp-meta">
+                        <span><i class="fas fa-calendar-alt"></i> July 2022 – Jan 2025</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Pune, India</span>
+                    </div>
+                    <div class="exp-achievements">
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-desktop"></i></div>
+                            <p>Built <strong>dynamic and responsive frontend</strong> applications using Angular, enhancing user experience and performance.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-plug"></i></div>
+                            <p>Integrated Angular frontend with <strong>REST APIs</strong>, enabling seamless data flow between client and server.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-server"></i></div>
+                            <p>Assisted in building <strong>RESTful APIs and backend services</strong>, gaining experience with microservices-based systems.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-bug"></i></div>
+                            <p>Participated in <strong>debugging and resolving production issues</strong>, improving application stability.</p>
+                        </div>
+                        <div class="achievement">
+                            <div class="achievement-icon"><i class="fas fa-tools"></i></div>
+                            <p>Assisted in <strong>refactoring existing codebases</strong>, following best coding practices and design principles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== EDUCATION ==================== -->
+        <section id="education">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">Education</span>
+                    <h2 class="section-title">Academic <span class="highlight">Foundation</span></h2>
+                </div>
+                <div class="education-card">
+                    <div class="edu-icon-wrap">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="edu-content">
+                        <h3>Bachelor of Technology in Computer Science</h3>
+                        <p class="edu-school">Shri Guru Gobind Singhji Institute of Engineering and Technology</p>
+                        <div class="edu-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Nanded, Maharashtra</span>
+                            <span><i class="fas fa-calendar-alt"></i> 2018 – 2022</span>
+                        </div>
+                        <div class="cgpa-badge">
+                            <i class="fas fa-star"></i> 8.0 CGPA
+                        </div>
+                    </div>
+                </div>
+
+                <div class="education-card" style="margin-top: 1.5rem;">
+                    <div class="edu-icon-wrap">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <div class="edu-content">
+                        <h3>Higher Secondary Education (12th)</h3>
+                        <p class="edu-school">Yeshwant Mahavidyalaya, Nanded</p>
+                        <div class="edu-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Nanded, Maharashtra</span>
+                            <span><i class="fas fa-calendar-alt"></i> 2018</span>
+                        </div>
+                        <div class="cgpa-badge">
+                            <i class="fas fa-star"></i> 84.31%
+                        </div>
+                    </div>
+                </div>
+
+                <div class="education-card" style="margin-top: 1.5rem;">
+                    <div class="edu-icon-wrap">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <div class="edu-content">
+                        <h3>Secondary Education (10th)</h3>
+                        <p class="edu-school">Madhavrao Patil High School, Nanded</p>
+                        <div class="edu-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Nanded, Maharashtra</span>
+                            <span><i class="fas fa-calendar-alt"></i> 2016</span>
+                        </div>
+                        <div class="cgpa-badge">
+                            <i class="fas fa-star"></i> 96.20%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ACHIEVEMENTS ==================== -->
+        <section id="achievements">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">Achievements</span>
+                    <h2 class="section-title">Recognition &amp; <span class="highlight">Awards</span></h2>
+                </div>
+                <div class="achievements-grid">
+                    <div class="award-card stagger-1" style="grid-column: 1 / -1;">
+                        <div class="award-icon">🏆</div>
+                        <div class="award-year">Recognition</div>
+                        <h3 class="award-title">Outstanding Performance Award</h3>
+                        <p class="award-desc">Recognized for exceptional performance, teamwork, and innovation in delivering high-quality software solutions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CONTACT ==================== -->
+        <section id="contact">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="section-tag">Contact</span>
+                    <h2 class="section-title">Let's <span class="highlight">Connect</span></h2>
+                </div>
+                <div class="contact-grid">
+                    <div class="contact-info-card">
+                        <h3>Get in touch</h3>
+                        <p>I'm always open to discussing new opportunities, innovative projects, and tech collaborations.</p>
+                        <a href="mailto:bapujitatepatil@gmail.com" class="contact-item">
+                            <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
+                            <span class="contact-item-text">bapujitatepatil@gmail.com</span>
+                        </a>
+                        <a href="tel:+919665976455" class="contact-item">
+                            <div class="contact-item-icon"><i class="fas fa-phone"></i></div>
+                            <span class="contact-item-text">+91-9665976455</span>
+                        </a>
+                        <div class="contact-item">
+                            <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <span class="contact-item-text">Pune, India</span>
+                        </div>
+                    </div>
+                    <div class="contact-form-card">
+                        <div class="contact-cta-icon"><i class="fas fa-handshake"></i></div>
+                        <h3>Let's build something great</h3>
+                        <p>Connect with me on social platforms!</p>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/bapuji-tate/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://github.com/BapujiTate" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Designed &amp; Built with <span class="heart">&hearts;</span> by Bapuji Tate &copy; 2026</p>
+    </footer>
+
+    <!-- Floating Download Button -->
+    <a href="BapujiTate-Resume.pdf" download class="download-fab" title="Download Resume">
+        <i class="fas fa-file-download"></i>
+    </a>
+
+    <script>
+        // ============================================
+        // PARTICLES
+        // ============================================
+        (function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (8 + Math.random() * 12) + 's';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.width = (2 + Math.random() * 4) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        })();
+
+        // ============================================
+        // TYPING EFFECT
+        // ============================================
+        (function typingEffect() {
+            const roles = [
+                'Software Engineer',
+                'Full Stack Developer',
+                'Angular Developer',
+                '.NET Developer',
+                'Tech Enthusiast'
+            ];
+            const el = document.getElementById('typingText');
+            let roleIdx = 0;
+            let charIdx = 0;
+            let isDeleting = false;
+            let speed = 80;
+
+            function type() {
+                const current = roles[roleIdx];
+                if (isDeleting) {
+                    el.textContent = current.substring(0, charIdx - 1);
+                    charIdx--;
+                    speed = 40;
+                } else {
+                    el.textContent = current.substring(0, charIdx + 1);
+                    charIdx++;
+                    speed = 80;
+                }
+
+                if (!isDeleting && charIdx === current.length) {
+                    speed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && charIdx === 0) {
+                    isDeleting = false;
+                    roleIdx = (roleIdx + 1) % roles.length;
+                    speed = 500;
+                }
+
+                setTimeout(type, speed);
+            }
+            type();
+        })();
+
+        // ============================================
+        // SECTION REVEAL ANIMATION
+        // ============================================
+        const sectionInners = document.querySelectorAll('.section-inner');
+        const observerReveal = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        sectionInners.forEach(el => observerReveal.observe(el));
+
+        // ============================================
+        // COUNTER ANIMATION
+        // ============================================
+        const stats = document.querySelectorAll('.stat-value');
+        const observerCounter = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-count'));
+                    let current = 0;
+                    const increment = target / 40;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            entry.target.textContent = target + '+';
+                            clearInterval(timer);
+                        } else {
+                            entry.target.textContent = Math.floor(current) + '+';
+                        }
+                    }, 40);
+                    observerCounter.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        stats.forEach(stat => observerCounter.observe(stat));
+
+        // ============================================
+        // GIT COMMIT GRAPH — SCROLL TRACKING
+        // ============================================
+        const gitProgress = document.getElementById('gitProgress');
+        const gitCommits = document.querySelectorAll('.git-commit');
+        const gitHead = document.getElementById('gitHead');
+        const gitGraph = document.getElementById('gitGraph');
+
+        // Position commits along the graph
+        function positionCommits() {
+            gitCommits.forEach(commit => {
+                const t = parseFloat(commit.dataset.stop);
+                commit.style.top = (t * 100) + '%';
+            });
+        }
+        positionCommits();
+
+        // Click on commit to scroll to section
+        gitCommits.forEach(commit => {
+            commit.addEventListener('click', () => {
+                const sectionId = commit.dataset.section;
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Track which main-line commit is closest for HEAD positioning
+        function getMainLineX() {
+            return 61; // main branch left offset
+        }
+
+        function updateGitGraph() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+
+            const firstStop = 0.06;
+            const lastStop = 0.93;
+            const currentT = firstStop + scrollPercent * (lastStop - firstStop);
+
+            // Update progress line height
+            gitProgress.style.height = (currentT * 100) + '%';
+
+            // Update HEAD position
+            const graphRect = gitGraph.getBoundingClientRect();
+            const headY = graphRect.top + (currentT * graphRect.height);
+            gitHead.style.top = headY + 'px';
+
+            // Update commit nodes
+            gitCommits.forEach(commit => {
+                const stopT = parseFloat(commit.dataset.stop);
+                if (currentT >= stopT - 0.015) {
+                    commit.classList.add('visited');
+                } else {
+                    commit.classList.remove('visited');
+                }
+            });
+
+            requestAnimationFrame(updateGitGraph);
+        }
+        requestAnimationFrame(updateGitGraph);
+
+        // ============================================
+        // SMOOTH SCROLL FOR NAV LINKS
+        // ============================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ============================================
+        // SKILL CARDS STAGGER ANIMATION
+        // ============================================
+        const staggerEls = document.querySelectorAll('[class*="stagger-"]');
+        const observerStagger = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        staggerEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${el.className.match(/stagger-(\d)/)?.[1] * 0.12}s`;
+            observerStagger.observe(el);
+        });
+
+    </script>
+</body>
+</html>
